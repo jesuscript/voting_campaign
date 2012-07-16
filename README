@@ -1,0 +1,24 @@
+To install:
+
+- git clone the project 
+- bundle install
+- import the database :
+    - you might have to create the database first:
+        - login to mysql
+        - run "create database mig_test"
+    - run "mysql -u <username> -p -h <host> mig_test < mig_test.sql"
+- that should be it, just run "rails s" from your command line
+
+Description:
+
+The first consideration was how to import the voting data: one option was to create just one table to keep all votes and then query this table to get the list of all (distinct) campaigns and candidates for each camaign with corresponding numbers of valid and invalid votes. The second option was to create three tables (and models): Votes, Candidates and Campaigns, and set up a many-to-many relationship between Candidates and Campaigns using Votes as a junktion table. This way the Candidates  and Campaigns tables would store candidates' and campaigns' names, respectively, and Votes would store the rest of the data relevant to each vote.
+
+The first option would have been OK for this task and also easier to implement, since neither Candidates nor Campaigns need to carry any functionality. However, I felt that the many-to-many relationship was fairly obvious in this scenario and also, if this code was to be used in a real-life project, this sort of normalisation would be very likely to happen at some point, so why not do it from the very beginning.
+
+Another consideration was which command-line tool to use in order to import the test data set. I went for a rake task because it has easy access to the environment of the rails app, specifically configs and models. The script can be found inside the lib/tasks directory. To use the script type rake votes:import["YOUR_FILE"] in the command line.
+
+The rake task opens the file and parses each line. If the line is malformed (doesn't start with "VOTE", has unknown, missing or incorrectly ordered fields), it is discarded. Otherwise, the script extracts the name of the candidate, the name of the campaign and the rest of the data from this line. Next, it checks whether the candidate/campaign already exist by checking the @candidates/@campaigns - if not, it queries the database for this candidate/campaign, and then creates a new record if it couldn't find the candidate/campaign, saves the object and also stores it in the ivar (@candidates or @campaigns). The last operation is done so that the script doesn't need to query the database for each candidate/campaign it spots if it has created one already in the current run. Less calls to the database = faster script.
+
+Lastly, the front-end is very basic. You can see all campaigns that we have data for and by clicking on each campaign you can see the list of candidates participating in that campaign and their corresponding numbers of valid and invalid votes. I used resourceful routes and set up the root of the application ("/") to point to campaigns#index.
+
+That's about it. For any questions please feel free to send me a message.
