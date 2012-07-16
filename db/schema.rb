@@ -14,7 +14,7 @@
 ActiveRecord::Schema.define(:version => 20120715191530) do
 
   create_table "campaigns", :force => true do |t|
-    t.integer "name", :null => false
+    t.string "name", :null => false
   end
 
   create_table "candidates", :force => true do |t|
@@ -22,16 +22,16 @@ ActiveRecord::Schema.define(:version => 20120715191530) do
   end
 
   create_table "votes", :force => true do |t|
-    t.integer  "campaign_id",                     :null => false
-    t.integer  "candidate_id",                    :null => false
-    t.string   "validity"
-    t.string   "conn"
-    t.string   "msisdn"
-    t.string   "guid"
-    t.integer  "shortcode"
-    t.boolean  "error",        :default => false
-    t.datetime "created_at",                      :null => false
-    t.datetime "updated_at",                      :null => false
+    t.integer  "campaign_id",       :null => false
+    t.integer  "candidate_id",      :null => false
+    t.string   "message_timestamp", :null => false
+    t.string   "validity",          :null => false
+    t.string   "conn",              :null => false
+    t.string   "msisdn",            :null => false
+    t.string   "guid",              :null => false
+    t.string   "shortcode",         :null => false
+    t.datetime "created_at",        :null => false
+    t.datetime "updated_at",        :null => false
   end
 
   add_index "votes", ["campaign_id"], :name => "votes_campaign_id_fk"
